@@ -3,7 +3,9 @@ puts "Welcome to Dungeon. With love by Oliver"
 puts "Enter your name:"
 print ">"
 # name = gets.strip
-name = "User"
+name = "User" # Temporal feature for easing manual testing
+
+# Set a player
 me = Player.new(name)
 my_dungeon = Dungeon.new(me)
 puts "Hi, #{my_dungeon.player.name}"
@@ -17,8 +19,13 @@ my_dungeon.add_room(:largecave,
 
 my_dungeon.add_room(:smallcave,
                     "Small Cave",
-                    "a small, claustrophobic cave",
-                    { :east => :largecave })
+                    "a small, claustrophobic cave. You see a door on the ceiling.",
+                    { :east => :largecave, :up => :outside })
+
+my_dungeon.add_room(:outside,
+                    "Outside",
+                    "an open world. You see stars on the sky. You escaped from the prison.",
+                    { :down => :smallcave })
 
 # Start the dungeon by placing the player in the large cave
 my_dungeon.start(:largecave)
@@ -31,13 +38,14 @@ help = "Useful commands:
     The 'QUIT' command prints your score and asks whether you wish
  to continue playing.
     The 'LOOK' command prints a description of your surroundings.
-    The 'SCORE' command prints your current score and ranking.
+    The 'SCORE' command prints your current score.
     The 'TIME' command tells you how long you have been playing.
 
 Directions:
     WEST, EAST, NORTH, SOUTH, UP, DOWN.
 "
-until command == "quit" do
+won_or_lose = false
+until command == "quit" || !!won_or_lose do
   print ">"
   command = gets.strip.downcase
   case command
@@ -90,9 +98,17 @@ until command == "quit" do
     else
       puts "You can't go that way."
     end
+  when "score"
+    puts "Your score is #{my_dungeon.player.score}"
   when "info"
     puts File.read("../info.txt")
   when "time"
     puts "You have been playing Dungeon for #{Time.at(Time.now - time_of_start).min} minutes."
+  end
+
+  if my_dungeon.player.location == :outside
+    won_or_lose = :won
+    puts "You won!"
+    puts "Your score is #{my_dungeon.player.score}"
   end
 end
