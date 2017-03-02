@@ -14,7 +14,7 @@ my_dungeon = Dungeon.new(me)
 my_dungeon.add_room(:largecave,
                     "\nMAZE \nLarge Cave",
                     "You are in a large cavernous cave. There's a note on the floor. Enter 'read the note' to read it.",
-                    { west: :room_2, north: :empty_room })
+                    { west: :room_2, north: :empty_room, east: :troll_room })
 
 my_dungeon.add_room(:smallcave,
                     "Small Cave",
@@ -30,6 +30,12 @@ my_dungeon.add_room(:dead_room,
                     "Dead End",
                     "Oh no! You got in a trap. Unfortunately, you are dead.",
                     { east: :room_2 })
+
+my_dungeon.add_room(:troll_room,
+                    "Troll Room",
+                    "Goddamnit! What is this monster doing here? The Troll are gonna kill you. Do you want me to rescue you?(y/n)",
+                    { south: :largecave })
+
 my_dungeon.add_room(:empty_room,
                     "Empty Room",
                     "You are in an empty room. It smells like here was a dog.",
@@ -139,6 +145,8 @@ until command == "quit" do
     end
   when "hello"
     puts hello.sample
+  when "thank you"
+    puts "You're welcome."
   when "oliver"
     puts oliver_says.sample
   else
@@ -154,6 +162,22 @@ until command == "quit" do
         puts "###################### End of the game"
         command = "quit"
       elsif answer == "y" || answer == "yes"
+        my_dungeon.start(:largecave)
+      else
+        puts "I don't understand that."
+      end
+    end until answer == "n" || answer == "no" || answer == "y" || answer == "yes"
+  end
+
+  if my_dungeon.player.location == :troll_room
+    begin
+      answer = gets.strip.downcase
+      if answer == "n" || answer == "no"
+        puts "You were killed by the troll. \n\n Sometimes people don't trust me. \n \t But that's okay."
+        puts "###################### End of the game"
+        command = "quit"
+      elsif answer == "y" || answer == "yes"
+        puts "Ok bro! Be careful next time."
         my_dungeon.start(:largecave)
       else
         puts "I don't understand that."
