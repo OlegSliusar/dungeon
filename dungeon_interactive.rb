@@ -1,5 +1,5 @@
 # Setting a player
-puts "Welcome to Dungeon. With love by Oliver"
+puts "Welcome to Dungeon. With love, by Oliver"
 puts "Enter your name:"
 print ">"
 # name = gets.strip
@@ -9,7 +9,6 @@ name = "User" # Temporal feature for easing manual testing
 me = Player.new(name)
 my_dungeon = Dungeon.new(me)
 puts "Hi, #{my_dungeon.player.name}"
-my_dungeon.player.score = 0
 
 # Add rooms to the dungeon
 my_dungeon.add_room(:largecave,
@@ -38,7 +37,6 @@ help = "Useful commands:
     The 'QUIT' command prints your score and asks whether you wish
  to continue playing.
     The 'LOOK' command prints a description of your surroundings.
-    The 'SCORE' command prints your current score.
     The 'TIME' command tells you how long you have been playing.
 
 Directions:
@@ -98,8 +96,6 @@ until command == "quit" || !!won_or_lose do
     else
       puts "You can't go that way."
     end
-  when "score"
-    puts "Your score is #{my_dungeon.player.score}"
   when "info"
     puts File.read("../info.txt")
   when "time"
@@ -109,6 +105,5 @@ until command == "quit" || !!won_or_lose do
   if my_dungeon.player.location == :outside
     won_or_lose = :won
     puts "You won!"
-    puts "Your score is #{my_dungeon.player.score}"
   end
 end
