@@ -1,30 +1,55 @@
 # Setting a player
-puts "Welcome to Dungeon. With love, by Oliver"
+puts "Welcome to Dungeon!"
 puts "Enter your name:"
 print ">"
 # name = gets.strip
-name = "User" # Temporal feature for easing manual testing
+name = "User" # Temporal feature for easing the manual testing
 
 # Set a player
 me = Player.new(name)
 my_dungeon = Dungeon.new(me)
-puts "Hi, #{my_dungeon.player.name}"
+# puts "Hi, #{my_dungeon.player.name}"
 
 # Add rooms to the dungeon
 my_dungeon.add_room(:largecave,
-                    "Large Cave",
-                    "a large cavernous cave",
-                    { :west => :smallcave })
+                    "\nMAZE \nLarge Cave",
+                    "You are in a large cavernous cave. There's a note on the floor. Enter 'read the note' to read it.",
+                    { west: :room_2, north: :empty_room })
 
 my_dungeon.add_room(:smallcave,
                     "Small Cave",
-                    "a small, claustrophobic cave. You see a door on the ceiling.",
-                    { :east => :largecave, :up => :outside })
+                    "You are in a small, claustrophobic cave. You see a grate on the ceiling.",
+                    { up: :outside })
 
 my_dungeon.add_room(:outside,
                     "Outside",
-                    "an open world. You see stars on the sky. You escaped from the prison.",
-                    { :down => :smallcave })
+                    "You are outside. You see stars on the sky. You escaped from the prison.",
+                    { down: :smallcave })
+
+my_dungeon.add_room(:dead_room,
+                    "Dead End",
+                    "Oh no! You got in a trap. Unfortunately, you are dead.",
+                    { east: :room_2 })
+my_dungeon.add_room(:empty_room,
+                    "Empty Room",
+                    "You are in an empty room. It smells like here was a dog.",
+                    {south: :largecave})
+
+my_dungeon.add_room(:room_2,
+                    "Room 2",
+                    "You are in another room.",
+                    {east: :largecave, west: :dead_room })
+
+# Set some other stuff
+oliver_says = ["Yep?", "Did you call me?", "You know my name?", "What?", "It's me", "Always with you", "Stay awesome", "My friends used to call me like this", "Do 22 push-ups and get my respect", "I'm working out now", "Are you bored by the game?", "Need help?", "Need help? Type 'help' command", "Need something?", "Hi", "Hey!", "The Ruby programming language", "Oliver is a great guy", "Got a question?"]
+oliver_says.push("Wanna talk about something?", "Want to tell me something?", "You like me?", "I know you. You are #{name}", "#{name}?")
+hello = ["Good day.", "Hello.", "Have a good day", "Nice weather we've been having lately."]
+stopwords = %w{the a by on for of are with just but and to the my I has some in}
+note_in_largecave = "Hi, #{name}! Welcome to Dungeon.
+  You are in a prison. You don't know how you got here, where it is and how long have you been here. So many questions...
+  But now, try to get out of this maze!
+  Always with you,
+  Oliver"
 
 # Start the dungeon by placing the player in the large cave
 my_dungeon.start(:largecave)
@@ -40,12 +65,18 @@ help = "Useful commands:
     The 'TIME' command tells you how long you have been playing.
 
 Directions:
-    WEST, EAST, NORTH, SOUTH, UP, DOWN.
+    WEST, EAST, NORTH, SOUTH, UP, DOWN, etc.
+
+    Note: You don't necessarily have to type them in upper case.
 "
 won_or_lose = false
-until command == "quit" || !!won_or_lose do
+until command == "quit" do
   print ">"
   command = gets.strip.downcase
+  command = command.scan(/\w+/)
+  command = command.reject { |word| stopwords.include?(word) }
+  command = command.join(" ")
+  puts "########## You entered: #{command}"
   case command
   when "quit"
     puts "Do you wish to leave the game?(yes/no)"
@@ -97,13 +128,45 @@ until command == "quit" || !!won_or_lose do
       puts "You can't go that way."
     end
   when "info"
-    puts File.read("../info.txt")
+    puts File.read("./info.txt")
   when "time"
     puts "You have been playing Dungeon for #{Time.at(Time.now - time_of_start).min} minutes."
+  when "read note"
+    if my_dungeon.player.location == :largecave
+      puts note_in_largecave
+    else
+      puts "I don't see any."
+    end
+  when "hello"
+    puts hello.sample
+  when "oliver"
+    puts oliver_says.sample
+  else
+    puts "I don't understand that."
+  end
+
+  if my_dungeon.player.location == :dead_room
+    won_or_lose = :lose
+    puts "Try again?(Y/n)"
+    begin
+      answer = gets.strip.downcase
+      if answer == "n" || answer == "no"
+        puts "###################### End of the game"
+        command = "quit"
+      elsif answer == "y" || answer == "yes"
+        my_dungeon.start(:largecave)
+      else
+        puts "I don't understand that."
+      end
+    end until answer == "n" || answer == "no" || answer == "y" || answer == "yes"
   end
 
   if my_dungeon.player.location == :outside
-    won_or_lose = :won
-    puts "You won!"
+    unless won_or_lose
+      won_or_lose = :won
+      puts "You won!"
+      puts "End the game?(Y/n)"
+      command = "quit" if gets.strip.downcase == "y"
+    end
   end
 end

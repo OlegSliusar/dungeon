@@ -1,3 +1,4 @@
-Dungeon is a text-based adventure game. You walk through dark underground, solve puzzles, and try to escape from the prison.
+Welcome to Dungeon!
+        Dungeon is a text-based adventure game. You walk through dark underground, solve puzzles, and try to escape from the prison.
 
-        Created by Oleh Sliusar, in 2017.
+                Created by Oleh Sliusar, in 2017.

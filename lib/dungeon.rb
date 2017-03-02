@@ -34,7 +34,7 @@ class Dungeon
 end
 
 class Player
-  attr_accessor :name, :location, :score
+  attr_accessor :name, :location
 
   def initialize(name)
     @name = name
@@ -51,6 +51,6 @@ attr_accessor :reference, :name, :description, :connections
   end
 
   def full_description
-    @name + "\n\nYou are in " + @description
+    @name + "\n\n" + @description
   end
 end
