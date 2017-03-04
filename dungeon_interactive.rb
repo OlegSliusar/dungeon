@@ -1,9 +1,16 @@
 # Setting a player
 puts "Welcome to Dungeon!"
-puts "Enter your name:"
-print ">"
-name = gets.strip
-# name = "User" # Temporal feature for easing the manual testing
+
+begin
+  puts "Enter your name:"
+  print ">"
+  name = gets.strip
+  if name.empty?
+    puts "The name can't be empty."
+    name = nil
+  end
+  # name = "User" # Temporal feature for easing the manual testing
+end while name.nil?
 
 # Set a player
 me = Player.new(name)
@@ -144,53 +151,51 @@ until command == "quit" do
     else
       command = ""
     end
-  when "help"
-    puts help
-  when "look"
-    puts my_dungeon.show_current_description
-  when "west"
+  when "help" then puts help
+  when "look" then puts my_dungeon.show_current_description
+  when "west", "w"
     unless my_dungeon.find_room_in_direction(:west).nil?
       my_dungeon.go(:west)
     else
       puts "You can't go that way."
     end
-  when "east"
+  when "east", "e"
     unless my_dungeon.find_room_in_direction(:east).nil?
       my_dungeon.go(:east)
     else
       puts "You can't go that way."
     end
-  when "north"
+  when "north", "n"
     unless my_dungeon.find_room_in_direction(:north).nil?
       my_dungeon.go(:north)
     else
       puts "You can't go that way."
     end
-  when "south"
+  when "south", "s"
     unless my_dungeon.find_room_in_direction(:south).nil?
       my_dungeon.go(:south)
     else
       puts "You can't go that way."
     end
-  when "north east"
+  when "north east", "n e"
     unless my_dungeon.find_room_in_direction(:north_east).nil?
       my_dungeon.go(:north_east)
     else
       puts "You can't go that way."
     end
-  when "east south"
+  when "east south", "e s"
     unless my_dungeon.find_room_in_direction(:east_south).nil?
       my_dungeon.go(:east_south)
     else
       puts "You can't go that way."
     end
-  when "south west"
+  when "south west", "s w"
     unless my_dungeon.find_room_in_direction(:south_west).nil?
       my_dungeon.go(:south_west)
     else
       puts "You can't go that way."
     end
-  when "west north"
+  when "west north", "w n"
     unless my_dungeon.find_room_in_direction(:west_north).nil?
       my_dungeon.go(:west_north)
     else
@@ -208,26 +213,19 @@ until command == "quit" do
     else
       puts "You can't go that way."
     end
-  when "info"
-    puts File.read("./info.txt")
-  when "time"
-    puts "You have been playing Dungeon for #{Time.at(Time.now - time_of_start).min} minutes."
+  when "info" then puts File.read("./info.txt")
+  when "time" then puts "You have been playing Dungeon for #{Time.at(Time.now - time_of_start).min} minutes."
   when "read note"
     if my_dungeon.player.location == :largecave
       puts note_at_largecave
     else
       puts "I don't see any."
     end
-  when "hello"
-    puts hello.sample
-  when "thank you"
-    puts "You're welcome."
-  when "oliver"
-    puts oliver_says.sample
+  when "hello" then puts hello.sample
+  when "thank you" then puts "You're welcome."
+  when "oliver" then puts oliver_says.sample
   when ""
-
-  else
-    puts "I don't understand that."
+  else puts "I don't understand that."
   end
 
   if my_dungeon.player.location == :dead_room

@@ -37,6 +37,7 @@ class Player
   attr_accessor :name, :location
 
   def initialize(name)
+    raise ArgumentError, "No name present" if name.empty?
     @name = name
   end
 end
